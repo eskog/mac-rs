@@ -1,33 +1,33 @@
-use std::{env, process::exit};
-use reqwest::blocking::Client;
 use regex::Regex;
+use reqwest::blocking::Client;
+use std::{env, process::exit};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len() != 2 {
-        println!("Incorrect usage. Exiting..");
+        eprintln!("Usage: {} <MAC address>", args[0]);
         exit(1)
     }
-
-    let newmac = format_mac_address(args[1].as_str());
-    if let Ok(mac_variants) = newmac {
-        let response = get_mac(mac_variants[0].as_str());
-        if response.is_ok() {
-            let vendor = response.unwrap().text().unwrap();
-            println!("{vendor}");
+    match format_mac_address(&args[1]) {
+        Ok(mac_variants) if !mac_variants.is_empty() => {
+            match get_mac(&mac_variants[0]) {
+                Ok(vendor) => println!("{vendor}"),
+                Err(e) => eprintln!("Failed to fetch vendor: {e}"),
+            }
             for mac in mac_variants {
-                println!("{mac}")
+                println!("{mac}");
             }
         }
+        _ => eprintln!("Invalid MAC address format"),
     }
-    }
+}
 
-fn get_mac(mac: &str) -> Result<reqwest::blocking::Response, reqwest::Error>{
+fn get_mac(mac: &str) -> Result<String, reqwest::Error> {
     const URL: &str = "https://api.macvendors.com/";
     let query_url = format!("{}{}", URL, mac);
     let http_client = Client::new();
-    http_client.get(query_url).send()
-
+    let response = http_client.get(query_url).send()?.text()?;
+    Ok(response)
 }
 
 fn format_mac_address(mac: &str) -> Result<Vec<String>, String> {
@@ -50,7 +50,7 @@ fn is_mac_valid(mac: &str) -> bool {
         Err(e) => {
             eprintln!("Regex compilation error: {e}");
             false
-        },
+        }
     }
 }
 
