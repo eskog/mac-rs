@@ -22,3 +22,5 @@ updates:
     labels:
       - "github-actions"
       - "chore"
+    commit-message:
+      prefix: "Chore:"
