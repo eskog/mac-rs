@@ -12,6 +12,9 @@ updates:
       - "dependencies"
     commit-message:
       prefix: "Chore:"
+    groups:
+      dependencies:
+        dependency-type: "all"
 
   - package-ecosystem: "github-actions"
     directory: "/"
