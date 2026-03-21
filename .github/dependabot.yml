@@ -1,0 +1,26 @@
+---
+version: 2
+updates:
+  - package-ecosystem: "cargo"
+    directory: "/"
+    assignees:
+      - "eskog"
+    schedule:
+      interval: "daily"
+    labels:
+      - "chore"
+      - "dependencies"
+    commit-message:
+      prefix: "Chore:"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    assignees:
+      - "eskog"
+    schedule: 
+      interval: "daily"
+    labels:
+      - "github-actions"
+      - "chore"
+    commit-message:
+      prefix: "Chore:"
